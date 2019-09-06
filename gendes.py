@@ -23,15 +23,16 @@ def generate_list_of_dict_instances():
             for instance in reservation["Instances"]:
                 each_instance = str(instance_number)
                 each_instance = {}
-                command = 'ssh -i ' + keypair +'.pem ' + 'ubuntu@' + instance["PublicIpAddress"]
+                command = 'ssh -i ' + '/Users/devired/Downloads/Downloads1/User_keys/'+ keypair +'.pem ' + 'ubuntu@' + instance["PublicIpAddress"]
                 each_instance["cmd"]= command
                 list_of_dict_instances.append(each_instance)
                 list_tags_of_each_instance = instance["Tags"]
                 each_instance["name"]=get_name_tag(list_tags_of_each_instance)
-
+                each_instance["inTerminal"]= "tab"
         return(list_of_dict_instances)
     else:
             return(list_of_dict_instances)
+
 
 def get_name_tag(list_tags_of_each_instance):
 #Get the "name" tag of the instance
