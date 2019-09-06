@@ -24,18 +24,20 @@ def generate_list_of_dict_instances(region):
     if len(response['Reservations']) > 0:
         for reservation in response["Reservations"]:
             for instance in reservation["Instances"]:
-                each_instance = str(instance_number)
-                each_instance = {}
-                command = 'ssh -i ' + '/Users/devired/Downloads/Downloads1/User_keys/'+ keypair +'.pem ' + 'ubuntu@' + instance["PublicIpAddress"]
-                each_instance["cmd"]= command
-                list_of_dict_instances.append(each_instance)
-                list_tags_of_each_instance = instance["Tags"]
-                each_instance["name"]=get_name_tag(list_tags_of_each_instance)
-                each_instance["inTerminal"]= "tab"
+                    if 'Platform' in instance :
+                        pass
+                    else:
+                        each_instance = str(instance_number)
+                        each_instance = {}
+                        command = 'ssh -i ' + '/Users/devired/Downloads/Downloads1/User_keys/'+ keypair +'.pem ' + 'ubuntu@' + instance["PublicIpAddress"]
+                        each_instance["cmd"]= command
+                        list_of_dict_instances.append(each_instance)
+                        list_tags_of_each_instance = instance["Tags"]
+                        each_instance["name"]= region + " : " + get_name_tag(list_tags_of_each_instance)
+                        each_instance["inTerminal"]= "tab"
         return(list_of_dict_instances)
     else:
             return(list_of_dict_instances)
-
 
 def get_name_tag(list_tags_of_each_instance):
 #Get the "name" tag of the instance
@@ -51,7 +53,6 @@ def get_name_tag(list_tags_of_each_instance):
         return name_tag_of_instance
 
 def modify_shuttle_json(region,region_number):
-    
 #Modify the shuttle.json file by passing the list of hosts from generate_list_of_instances()
     host_list=generate_list_of_dict_instances(region)
     with open('/Users/devired/.shuttle.json') as json_file:
