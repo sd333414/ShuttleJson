@@ -2,12 +2,12 @@ import json, boto3
 client = boto3.client('ec2')
 
 def get_key_pair(region):
-    lient = boto3.client('ec2', region_name = region)
+    client = boto3.client('ec2', region_name = region)
     #Get keypair for the current region. If the region has more than 2 keypairs, you need to delete one and use only one keypair.
     keypairs = client.describe_key_pairs()
     keypairs = keypairs['KeyPairs']
     if len(keypairs)==0:
-        message = "You do not have a KeyPair in ", i
+        message = "You do not have a KeyPair in ", region
         return message 
     else:
         keypair = keypairs[0]['KeyName']
@@ -18,6 +18,7 @@ def generate_list_of_dict_instances(region):
     print(region)
     #If there are no instances(in any state), return an empty list. If there is an instance in any state in this region, save the list of instances as raw_list_of_instances
     keypair = get_key_pair(region)
+    print(keypair)
     list_of_dict_instances = []
     instance_number = 0
     response = client.describe_instances(Filters=[{"Name":"instance-state-name", "Values":["running"]}])
@@ -29,7 +30,7 @@ def generate_list_of_dict_instances(region):
                     else:
                         each_instance = str(instance_number)
                         each_instance = {}
-                        command = 'for user_name in root ubuntu ec2-user cent; do if gtimeout 3 ssh -i ' + keypair + '.pem' + ' $user_name@' + instance["PublicIpAddress"] + ' true 2>/dev/null; then ssh -i ' + keypair + '.pem' + ' $user_name@' + instance["PublicIpAddress"] + '; fi; done'
+                        command = 'for user_name in ec2-user ubuntu centos fedora admin bitnami root; do if gtimeout 3 ssh -i ' + keypair + '.pem' + ' $user_name@' + instance["PublicIpAddress"] + ' true 2>/dev/null; then ssh -i ' + keypair + '.pem' + ' $user_name@' + instance["PublicIpAddress"] + '; fi; done'
                         each_instance["cmd"]= command
                         list_of_dict_instances.append(each_instance)
                         list_tags_of_each_instance = instance["Tags"]
