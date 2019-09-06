@@ -15,7 +15,6 @@ def get_key_pair(region):
 
 def generate_list_of_dict_instances(region):
     client = boto3.client('ec2', region_name = region)
-    user_name = "ubuntu"
     print(region)
     #If there are no instances(in any state), return an empty list. If there is an instance in any state in this region, save the list of instances as raw_list_of_instances
     keypair = get_key_pair(region)
@@ -30,7 +29,7 @@ def generate_list_of_dict_instances(region):
                     else:
                         each_instance = str(instance_number)
                         each_instance = {}
-                        command = 'ssh -i ' + '/Users/devired/Downloads/Downloads1/User_keys/'+ keypair +'.pem ' + user_name + '@' + instance["PublicIpAddress"]
+                        command = 'for user_name in root ubuntu ec2-user cent; do if gtimeout 3 ssh -i ' + keypair + '.pem' + ' $user_name@' + instance["PublicIpAddress"] + ' true 2>/dev/null; then ssh -i ' + keypair + '.pem' + ' $user_name@' + instance["PublicIpAddress"] + '; fi; done'
                         each_instance["cmd"]= command
                         list_of_dict_instances.append(each_instance)
                         list_tags_of_each_instance = instance["Tags"]
@@ -62,9 +61,9 @@ def modify_shuttle_json(region,region_number):
             data['hosts'] = host_list
         else:
             data['hosts'] = data['hosts']+host_list
-
     with open('/Users/devired/.shuttle.json', 'w') as json_file:
         json.dump(data,json_file)
+
 
 def main():
     ec2_regions=[region['RegionName'] for region in client.describe_regions()['Regions']]
