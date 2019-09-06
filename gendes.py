@@ -3,7 +3,7 @@ client = boto3.client('ec2')
 
 def get_key_pair(region):
     lient = boto3.client('ec2', region_name = region)
-#Get keypair for the current region. If the region has more than 2 keypairs, you need to delete one and use only one keypair.
+    #Get keypair for the current region. If the region has more than 2 keypairs, you need to delete one and use only one keypair.
     keypairs = client.describe_key_pairs()
     keypairs = keypairs['KeyPairs']
     if len(keypairs)==0:
@@ -15,8 +15,9 @@ def get_key_pair(region):
 
 def generate_list_of_dict_instances(region):
     client = boto3.client('ec2', region_name = region)
+    user_name = "ubuntu"
     print(region)
-#If there are no instances(in any state), return an empty list. If there is an instance in any state in this region, save the list of instances as raw_list_of_instances
+    #If there are no instances(in any state), return an empty list. If there is an instance in any state in this region, save the list of instances as raw_list_of_instances
     keypair = get_key_pair(region)
     list_of_dict_instances = []
     instance_number = 0
@@ -29,7 +30,7 @@ def generate_list_of_dict_instances(region):
                     else:
                         each_instance = str(instance_number)
                         each_instance = {}
-                        command = 'ssh -i ' + '/Users/devired/Downloads/Downloads1/User_keys/'+ keypair +'.pem ' + 'ubuntu@' + instance["PublicIpAddress"]
+                        command = 'ssh -i ' + '/Users/devired/Downloads/Downloads1/User_keys/'+ keypair +'.pem ' + user_name + '@' + instance["PublicIpAddress"]
                         each_instance["cmd"]= command
                         list_of_dict_instances.append(each_instance)
                         list_tags_of_each_instance = instance["Tags"]
@@ -37,10 +38,10 @@ def generate_list_of_dict_instances(region):
                         each_instance["inTerminal"]= "tab"
         return(list_of_dict_instances)
     else:
-            return(list_of_dict_instances)
+        return(list_of_dict_instances)
 
-def get_name_tag(list_tags_of_each_instance):
 #Get the "name" tag of the instance
+def get_name_tag(list_tags_of_each_instance):
     name_key_present = 0
     for tag in list_tags_of_each_instance:
         #print(tag)
@@ -52,8 +53,8 @@ def get_name_tag(list_tags_of_each_instance):
         name_tag_of_instance="no_name_tag"
         return name_tag_of_instance
 
-def modify_shuttle_json(region,region_number):
 #Modify the shuttle.json file by passing the list of hosts from generate_list_of_instances()
+def modify_shuttle_json(region,region_number):
     host_list=generate_list_of_dict_instances(region)
     with open('/Users/devired/.shuttle.json') as json_file:
         data = json.load(json_file)
@@ -67,11 +68,11 @@ def modify_shuttle_json(region,region_number):
 
 def main():
     ec2_regions=[region['RegionName'] for region in client.describe_regions()['Regions']]
-    #ec2_regions=['us-east-1','us-east-2']
     region_number = 0
     for region in ec2_regions:
-        region_number=region_number+1
         modify_shuttle_json(region,region_number)
+        region_number=region_number+1
+        
 
 if __name__ == "__main__":
     main()
