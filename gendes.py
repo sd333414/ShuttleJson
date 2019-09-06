@@ -44,7 +44,6 @@ def generate_list_of_dict_instances(region):
 def get_name_tag(list_tags_of_each_instance):
     name_key_present = 0
     for tag in list_tags_of_each_instance:
-        #print(tag)
         if tag['Key'] == 'Name' :
             name_tag_of_instance=tag['Value']
             name_key_present=1
