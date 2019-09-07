@@ -3,7 +3,7 @@ client = boto3.client('ec2')
 
 def get_key_pair(region):
     client = boto3.client('ec2', region_name = region)
-    #Get keypair for the current region. If the region has more than 2 keypairs, you need to delete one and use only one keypair.
+    #Get keypair for the current region. If the region has more than two keypairs, you need to delete one and use only one keypair.
     keypairs = client.describe_key_pairs()
     keypairs = keypairs['KeyPairs']
     if len(keypairs)==0:
