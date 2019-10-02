@@ -57,8 +57,8 @@ def generate_list_of_dict_instances(region):
                         host_ip = instance["PublicIpAddress"]
                         each_instance["cmd"]= cmd_gen(keypair, host_ip)
                         list_of_dict_instances.append(each_instance)
+                        # If there are no tags to the instance, pass an emtpy list as Tags
                         if 'Tags' in instance:
-
                             list_tags_of_each_instance = instance["Tags"]
                         else: 
                             list_tags_of_each_instance = []
@@ -72,9 +72,6 @@ def generate_list_of_dict_instances(region):
 def cmd_gen(keypair, host_ip):
     #command = "python3 /Users/devired/Desktop/Shuttle/start_stop.py"
     #command = 'for user_name in ec2-user ubuntu centos fedora admin bitnami root; do if gtimeout 3 ssh -i ' + '/Users/devired/Downloads/User_keys/' + keypair + '.pem' + ' $user_name@' + host_ip + ' true 2>/dev/#null; then ssh -i ' + keypair + '.pem' + ' $user_name@' + host_ip + '; fi; done'
-
-
-
     command = 'for user_name in ec2-user ubuntu centos fedora admin bitnami root; do if gtimeout 3 ssh -i ' + '/Users/devired/Downloads/User_keys/' + keypair + '.pem' + ' $user_name@' + host_ip + ' true 2>/dev/null; then ssh -i ' + keypair + '.pem' + ' $user_name@' + host_ip + '; fi; done'
 
     return command
