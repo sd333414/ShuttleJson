@@ -54,7 +54,10 @@ def generate_list_of_dict_instances(region):
                     else:
                         each_instance = str(instance_number)
                         each_instance = {}
-                        host_ip = instance["PublicIpAddress"]
+                        if 'PublicIpAddress' in instance:
+                            host_ip = instance["PublicIpAddress"]
+                        else:
+                            host_ip = '169.254.169.254'
                         each_instance["cmd"]= cmd_gen(keypair, host_ip)
                         list_of_dict_instances.append(each_instance)
                         # If there are no tags to the instance, pass an emtpy list as Tags
